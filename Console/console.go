@@ -20,11 +20,11 @@ func ClearLine()                      { fmt.Print("\033[2K") }
 func EnableAlternateBuffer()  { fmt.Print("\033[?1049h") }
 func DisableAlternateBuffer() { fmt.Print("\033[?1049l") }
 
-func GetTermSize() *TermSize {
+func GetTermSize() *AreaInfo {
 	fd := int(os.Stdout.Fd())
 	width, height, err := term.GetSize(fd)
 	if err != nil {
 		log.Fatalf("Failed to get terminal size: %s", err)
 	}
-	return &TermSize{Width: uint(width), Height: uint(height)}
+	return &AreaInfo{Width: uint(width), Height: uint(height)}
 }

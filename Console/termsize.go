@@ -1,6 +1,6 @@
 package Console
 
-type TermSize struct {
+type AreaInfo struct {
 	Width  uint
 	Height uint
 }
