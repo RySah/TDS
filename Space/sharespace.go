@@ -2,6 +2,7 @@ package Space
 
 import (
 	"slices"
+	"strings"
 	"sync"
 
 	"github.com/RySah/TDS/Canvas"
@@ -133,6 +134,18 @@ func (sspace *Sharespace) AdjustSharespaceSizeTo(wg *sync.WaitGroup, newArea *Co
 		sspace.canvasPosMap[canvasName] = *Canvas.NewVec2(x[i], y[i])
 		sspace.canvasMap[canvasName].Area.Width = w[i]
 		sspace.canvasMap[canvasName].Area.Height = h[i]
+		sspace.canvasMap[canvasName].DisplayComponent.InDisplayArea.Width *= widthSF
+		sspace.canvasMap[canvasName].DisplayComponent.InDisplayArea.Height *= heightSF
+		if len(sspace.canvasMap[canvasName].DisplayComponent.Buffer) < int(newArea.Height) {
+			for i := len(sspace.canvasMap[canvasName].DisplayComponent.Buffer); i <= int(newArea.Height); i++ {
+				sspace.canvasMap[canvasName].DisplayComponent.Buffer = append(sspace.canvasMap[canvasName].DisplayComponent.Buffer, "")
+			}
+		}
+		for j, line := range sspace.canvasMap[canvasName].DisplayComponent.Buffer {
+			if len([]rune(line)) < int(newArea.Width) {
+				sspace.canvasMap[canvasName].DisplayComponent.Buffer[j] = line + strings.Repeat(" ", int(newArea.Width)-len([]rune(line)))
+			}
+		}
 	}
 }
 
