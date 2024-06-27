@@ -72,6 +72,10 @@ func (sspace *Sharespace) AutoMaintainRatio(ch <-chan Console.AreaInfo) {
 		wg.Add(1)
 		sspace.AdjustSharespaceSizeTo(&wg, &newArea)
 		wg.Wait()
+
+		for _, canvasName := range sspace.orderOfLoading {
+			sspace.canvasMap[canvasName].TryLoadContent()
+		}
 	}
 }
 func (sspace *Sharespace) AdjustSharespaceSizeTo(wg *sync.WaitGroup, newArea *Console.AreaInfo) {
