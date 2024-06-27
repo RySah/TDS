@@ -56,6 +56,12 @@ func (sspace *Sharespace) Deinit() {
 	}
 }
 
+func (sspace *Sharespace) TryLoadAll() {
+	for _, canvasName := range sspace.orderOfLoading {
+		sspace.canvasMap[canvasName].TryLoadContent()
+	}
+}
+
 func (sspace *Sharespace) AutoMaintainRatio(ch <-chan Console.AreaInfo) {
 	var wg sync.WaitGroup
 
@@ -72,6 +78,8 @@ func (sspace *Sharespace) AutoMaintainRatio(ch <-chan Console.AreaInfo) {
 		wg.Add(1)
 		sspace.AdjustSharespaceSizeTo(&wg, &newArea)
 		wg.Wait()
+
+		sspace.TryLoadAll()
 	}
 }
 func (sspace *Sharespace) AdjustSharespaceSizeTo(wg *sync.WaitGroup, newArea *Console.AreaInfo) {
