@@ -70,11 +70,11 @@ func (sspace *Sharespace) AutoMaintainRatio(ch <-chan Console.AreaInfo) {
 		wg.Wait()
 
 		wg.Add(1)
-		sspace.AdjustSharespaceRatioTo(&wg, &newArea)
+		sspace.AdjustSharespaceSizeTo(&wg, &newArea)
 		wg.Wait()
 	}
 }
-func (sspace *Sharespace) AdjustSharespaceRatioTo(wg *sync.WaitGroup, newArea *Console.AreaInfo) {
+func (sspace *Sharespace) AdjustSharespaceSizeTo(wg *sync.WaitGroup, newArea *Console.AreaInfo) {
 	defer wg.Done()
 
 	w := make([]int, 0)
@@ -93,10 +93,19 @@ func (sspace *Sharespace) AdjustSharespaceRatioTo(wg *sync.WaitGroup, newArea *C
 		h = append(h, c.Area.Height)
 	}
 
+	widthDivend := slices.Max(w)
+	if widthDivend == 0 {
+		widthDivend = 1
+	}
+	heightDivend := slices.Max(h)
+	if heightDivend == 0 {
+		heightDivend = 1
+	}
+
 	// Getting the scale factor for all canvases widths
-	var widthSF int = int(newArea.Width) / slices.Max(w)
+	var widthSF int = int(newArea.Width) / widthDivend
 	// Getting the scale factor for all canvases heights
-	var heightSF int = int(newArea.Height) / slices.Max(h)
+	var heightSF int = int(newArea.Height) / heightDivend
 
 	// Looping again to apply the scale factor and other adjustments to coordinates
 	for i := 0; i < len(sspace.orderOfLoading); i++ {
